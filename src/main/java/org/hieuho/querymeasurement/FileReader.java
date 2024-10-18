@@ -2,6 +2,7 @@ package org.hieuho.querymeasurement;
 
 import com.opencsv.CSVReader;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +30,11 @@ public class FileReader {
     public FileReader(List<Path> csvFilePaths) {
         this.csvFilePaths = csvFilePaths;
         this.queries = getQueriesFromFile(DEFAULT_QUERIES);
+    }
+
+    public FileReader(String queriesFilePath) {
+        this.csvFilePaths = getAllCSV(DEFAULT_CSV);
+        this.queries = getQueriesFromFile(queriesFilePath);
     }
 
     public List<String> getQueries() {
