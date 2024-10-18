@@ -12,7 +12,7 @@ public class QueryMeasurementApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(QueryMeasurementApplication.class.getResource("query-measurement-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 850, 600);
-        stage.setTitle("Hieu Ho");
+        stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.show();
     }
