@@ -1,0 +1,27 @@
+.data0.chart-bar {
+    -fx-bar-fill: cadetblue;
+}
+
+.data1.chart-bar {
+    -fx-bar-fill: coral;
+}
+
+.data2.chart-bar {
+    -fx-bar-fill: darkkhaki;
+}
+
+.data3.chart-bar {
+    -fx-bar-fill: mediumpurple;
+}
+
+.data4.chart-bar {
+    -fx-bar-fill: indianred;
+}
+
+.data5.chart-bar {
+    -fx-bar-fill: darkolivegreen;
+}
+
+.data6.chart-bar {
+    -fx-bar-fill: hotpink;
+}

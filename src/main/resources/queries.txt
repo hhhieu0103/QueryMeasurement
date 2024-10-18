@@ -1,0 +1,42 @@
+SELECT s1.PersonName
+FROM Salary s1
+         JOIN (
+    SELECT s2.PersonID, MAX(s2.EarningsYear) AS MostRecentYear
+    FROM Salary s2
+    GROUP BY PersonID
+) AS recent ON s1.PersonID = recent.PersonID AND s1.EarningsYear = recent.MostRecentYear
+WHERE s1.BirthDate < '1975-01-01'
+  AND s1.Earnings > 130000;
+
+SELECT s.PersonName,
+       s.SchoolName
+FROM   Salary s
+WHERE  earnings > 400000
+  AND s.StillWorking = 'no';
+
+SELECT DISTINCT s.PersonName
+FROM   Salary s
+WHERE  s.SchoolName = 'University of Texas'
+  AND s.JobTitle = 'Lecturer'
+  AND s.StillWorking = 'no';
+
+SELECT s.SchoolName,
+       s.SchoolCampus
+FROM   Salary s
+WHERE  s.StillWorking = 'yes'
+GROUP  BY s.SchoolName,
+          s.SchoolCampus
+ORDER  BY Count(DISTINCT s.PersonID) DESC
+LIMIT  1;
+
+SELECT DISTINCT s.*
+FROM   Salary s
+WHERE  s.PersonName = 'Hieu Ho'
+ORDER  BY s.EarningsYear DESC
+LIMIT  1;
+
+SELECT s.DepartmentName
+FROM   Salary s
+GROUP  BY s.DepartmentName
+ORDER  BY Avg(s.Earnings) DESC
+LIMIT  1;
