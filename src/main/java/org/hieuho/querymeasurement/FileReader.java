@@ -27,14 +27,12 @@ public class FileReader {
         this(DEFAULT_CSV, DEFAULT_QUERIES);
     }
 
-    public FileReader(List<Path> csvFilePaths) {
-        this.csvFilePaths = csvFilePaths;
-        this.queries = getQueriesFromFile(DEFAULT_QUERIES);
+    public void setQueries(String queriesFilePath) {
+        this.queries = getQueriesFromFile(queriesFilePath);
     }
 
-    public FileReader(String queriesFilePath) {
-        this.csvFilePaths = getAllCSV(DEFAULT_CSV);
-        this.queries = getQueriesFromFile(queriesFilePath);
+    public void setCsvFilePaths(List<Path> csvFilePaths) {
+        this.csvFilePaths = csvFilePaths;
     }
 
     public List<String> getQueries() {

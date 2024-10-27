@@ -1,10 +1,16 @@
 package org.hieuho.querymeasurement;
 
+import com.sun.tools.javac.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BarChartFX {
@@ -20,7 +26,7 @@ public class BarChartFX {
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel(yAxisLabel);
 
-        this.barChart = new BarChart<String,Number>(xAxis, yAxis);
+        this.barChart = new BarChart<>(xAxis, yAxis);
         barChart.setTitle(title);
     }
 

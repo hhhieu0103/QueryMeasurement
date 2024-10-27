@@ -16,6 +16,10 @@ public class ChartFactory {
         this.data = data;
     }
 
+    public void setData(float[][] data) {
+        this.data = data;
+    }
+
     public BarChartFX createGeneralBarChart() {
         int rows = data.length;
         int cols = data[0].length;
@@ -23,7 +27,7 @@ public class ChartFactory {
         List<XYChart.Series<String, Number>> seriesList = new ArrayList<>();
 
         for (int i = 0; i < rows; i++) {
-            XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName(sizeLabels.get(i));
             for (int j = 0; j < cols; j++) {
                 series.getData().add(new XYChart.Data<>(queryLabels.get(j), data[i][j]));
@@ -39,7 +43,7 @@ public class ChartFactory {
         int rows = data.length;
         int cols = data[0].length;
         for (int i = 0; i < rows; i++) {
-            XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName(sizeLabels.get(i));
             for (int j = 0; j < cols; j++) {
                 series.getData().add(new XYChart.Data<>(queryLabels.get(j), data[i][j]));
@@ -57,7 +61,7 @@ public class ChartFactory {
         int rows = data.length;
         int cols = data[0].length;
         for (int i = 0; i < cols; i++) {
-            XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
             series.setName(queryLabels.get(i));
             for (int j = 0; j < rows; j++) {
                 series.getData().add(new XYChart.Data<>(sizeLabels.get(j), data[j][i]));
