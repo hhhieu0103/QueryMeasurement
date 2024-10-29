@@ -11,7 +11,11 @@
                 <Menu mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#onDataFilesSelected" text="Select data files" />
-                        <MenuItem mnemonicParsing="false" onAction="#onQueriesFileSelected" text="Select queries files" />
+                  <MenuItem mnemonicParsing="false" onAction="#onDefaultDataUsed" text="Use default data" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem mnemonicParsing="false" onAction="#onQueriesFileSelected" text="Select query files" />
+                  <MenuItem mnemonicParsing="false" onAction="#onDefaultQueriesUsed" text="Use default queries" />
+                  <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem mnemonicParsing="false" onAction="#onChartsSaved" text="Save charts to files" />
                     </items>
                 </Menu>

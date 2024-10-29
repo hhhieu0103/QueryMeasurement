@@ -51,7 +51,7 @@ public class QueryMeasurementController {
     }
 
     private float[][] executeQueries() {
-        List<String> csvFileNames = reader.getCsvFileNamesWithoutExtension();
+        List<String> csvFileNames = reader.getDataFileNamesWithoutExtension();
         List<String> queries = reader.getQueries();
         QueryExecutor executor = new QueryExecutor(csvFileNames, queries);
         try {
@@ -63,7 +63,7 @@ public class QueryMeasurementController {
     }
 
     private void buildChartFactory(float[][] executionTimes) {
-        List<String> csvFileNames = reader.getCsvFileNamesWithoutExtension();
+        List<String> csvFileNames = reader.getDataFileNamesWithoutExtension();
         List<String> queries = reader.getQueries();
         List<String> queryLabels = IntStream.range(0, queries.size())
                 .mapToObj(value -> "Query " + (value + 1))
@@ -104,9 +104,12 @@ public class QueryMeasurementController {
     }
 
     private void createFileListView() {
-        List<String> fileNames = reader.getCsvFileNamesWithoutExtension();
-        fileNames = fileNames.stream().map(name -> "[DATA] " + name).toList();
-        ObservableList<String> observableList = FXCollections.observableArrayList(fileNames);
+        List<String> dataFiles = reader.getDataFileNamesWithoutExtension();
+        dataFiles = dataFiles.stream().map(name -> "[DATA] " + name).toList();
+        List<String> queryFiles = reader.getQueryFileNamesWithoutExtension();
+        queryFiles = queryFiles.stream().map(name -> "[QUERY] " + name).toList();
+        ObservableList<String> observableList = FXCollections.observableArrayList(dataFiles);
+        observableList.addAll(queryFiles);
         fileListView.setItems(observableList);
     }
 
@@ -116,7 +119,7 @@ public class QueryMeasurementController {
         List<File> files = fileChooser.showOpenMultipleDialog(null);
         if (files != null) {
             List<Path> filePaths = files.stream().map(File::toPath).toList();
-            reader.setCsvFilePaths(filePaths);
+            reader.setDataFilePaths(filePaths);
             reader.importCSVFilesToDB();
             float[][] executionTimes = executeQueries();
             factory.setData(executionTimes);
@@ -129,10 +132,10 @@ public class QueryMeasurementController {
     public void onQueriesFileSelected(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("TXT file", "*.txt"));
-        File file = fileChooser.showOpenDialog(null);
-        if (file != null) {
-            String filePath = file.getPath();
-            reader.setQueries(filePath);
+        List<File> files = fileChooser.showOpenMultipleDialog(null);
+        if (files != null) {
+            List<Path> filePaths = files.stream().map(File::toPath).toList();
+            reader.setQueryFilePaths(filePaths);
             float[][] executionTimes = executeQueries();
             factory.setData(executionTimes);
             barChartFXList = createBarCharts();
@@ -150,8 +153,8 @@ public class QueryMeasurementController {
             for (BarChartFX barChartFX : barChartFXList) {
                 Scene scene = new Scene(new Group());
                 BarChart<String, Number> barChart = barChartFX.getBarChart();
-                barChart.setPrefHeight(800);
-                barChart.setPrefWidth(1000);
+                barChart.setPrefHeight(640);
+                barChart.setPrefWidth(800);
                 ((Group) scene.getRoot()).getChildren().add(barChart);
                 WritableImage image = scene.snapshot(null);
                 File chartImage = new File(filePath + "\\" + barChart.getTitle() + ".png");
@@ -173,5 +176,26 @@ public class QueryMeasurementController {
                 }
             }
         }
+    }
+
+    public void onDefaultDataUsed(ActionEvent actionEvent) {
+        reader.setDefaultDataPath();
+        reader.importCSVFilesToDB();
+
+        float[][] executionTimes = executeQueries();
+        factory.setData(executionTimes);
+        barChartFXList = createBarCharts();
+        addChartsToTree();
+        createFileListView();
+    }
+
+    public void onDefaultQueriesUsed(ActionEvent actionEvent) {
+        reader.setDefaultQueryPath();
+
+        float[][] executionTimes = executeQueries();
+        factory.setData(executionTimes);
+        barChartFXList = createBarCharts();
+        addChartsToTree();
+        createFileListView();
     }
 }

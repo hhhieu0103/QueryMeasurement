@@ -2,65 +2,80 @@ package org.hieuho.querymeasurement;
 
 import com.opencsv.CSVReader;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class FileReader {
     private static final int BUFFER_SIZE = 10000;
-    private static final String DEFAULT_CSV = "src/main/resources/csv";
-    private static final String DEFAULT_QUERIES = "src/main/resources/queries.txt";
-    private List<String> queries = new ArrayList<>();
-    private List<Path> csvFilePaths = new ArrayList<>();
+    private static final String DEFAULT_DATA_PATH = "src/main/resources/data";
+    private static final String DEFAULT_QUERY_PATH = "src/main/resources/query";
+    private List<Path> queryFilePaths = new ArrayList<>();
+    private final List<String> queries = new ArrayList<>();
+    private List<Path> dataFilePaths = new ArrayList<>();
 
-    public FileReader(String csvFolderPath, String queriesFilePath) {
-        this.csvFilePaths = getAllCSV(csvFolderPath);
-        this.queries = getQueriesFromFile(queriesFilePath);
+    public FileReader(String dataFolderPath, String queryFolderPath) {
+        this.dataFilePaths = getFilePathsFromFolder(dataFolderPath, ".csv");
+        this.queryFilePaths = getFilePathsFromFolder(queryFolderPath, ".txt");
+        extractQueries();
     }
 
     public FileReader() {
-        this(DEFAULT_CSV, DEFAULT_QUERIES);
-    }
-
-    public void setQueries(String queriesFilePath) {
-        this.queries = getQueriesFromFile(queriesFilePath);
-    }
-
-    public void setCsvFilePaths(List<Path> csvFilePaths) {
-        this.csvFilePaths = csvFilePaths;
+        this(DEFAULT_DATA_PATH, DEFAULT_QUERY_PATH);
     }
 
     public List<String> getQueries() {
         return queries;
     }
 
-    public List<String> getCsvFileNamesWithoutExtension() {
-        return csvFilePaths.stream().map(this::getFileNameWithoutExtension).toList();
+    public void setQueryFilePaths(List<Path> queryFilePaths) {
+        this.queryFilePaths = queryFilePaths;
+        extractQueries();
     }
 
-    private List<Path> getAllCSV(String csvFolderPath) {
-        List<Path> csvFilePaths = new ArrayList<>();
+    public void setDataFilePaths(List<Path> dataFilePaths) {
+        this.dataFilePaths = dataFilePaths;
+    }
 
-        Path resourceDirectory = Paths.get(csvFolderPath);
+    public void setDefaultDataPath() {
+        this.dataFilePaths = getFilePathsFromFolder(DEFAULT_DATA_PATH, ".csv");
+    }
+
+    public void setDefaultQueryPath() {
+        this.queryFilePaths = getFilePathsFromFolder(DEFAULT_QUERY_PATH, ".txt");
+        extractQueries();
+    }
+
+    public List<String> getDataFileNamesWithoutExtension() {
+        return dataFilePaths.stream().map(this::getFileNameWithoutExtension).toList();
+    }
+
+    public List<String> getQueryFileNamesWithoutExtension() {
+        return queryFilePaths.stream().map(this::getFileNameWithoutExtension).toList();
+    }
+
+    private List<Path> getFilePathsFromFolder(String folderPath, String extension) {
+        List<Path> filePaths = new ArrayList<>();
+        Path resourceDirectory = Paths.get(folderPath);
 
         try (Stream<Path> paths = Files.walk(resourceDirectory)) {
             paths.filter(Files::isRegularFile)
-                    .filter(path -> path.toString().toLowerCase().endsWith(".csv"))
-                    .forEach(csvFilePaths::add);
+                    .filter(path -> path.toString().toLowerCase().endsWith(extension))
+                    .forEach(filePaths::add);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
 
-        return csvFilePaths;
+        return filePaths;
     }
 
     public void importCSVFilesToDB() {
-        csvFilePaths.forEach(filePath -> {
+        dataFilePaths.forEach(filePath -> {
             try {
                 SalaryDAO salaryDAO = new SalaryDAO(getFileNameWithoutExtension(filePath));
                 salaryDAO.dropTable();
@@ -101,24 +116,17 @@ public class FileReader {
         return fileName.substring(0, fileName.lastIndexOf("."));
     }
 
-    private List<String> getQueriesFromFile(String filePath) {
-        List<String> queries = new ArrayList<>();
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(filePath));
-            StringBuilder query = new StringBuilder();
-            for (String line : lines) {
-                String trimmedLine = line.trim();
-                if (trimmedLine.endsWith(";")) {
-                    query.append(" ").append(trimmedLine);
-                    queries.add(query.toString());
-                    query = new StringBuilder();
-                } else {
-                    query.append(" ").append(trimmedLine);
-                }
+    private void extractQueries() {
+        for (Path queryFile : queryFilePaths) {
+            try {
+                String text = new String(Files.readAllBytes(Paths.get(queryFile.toString())));
+                queries.clear();
+                queries.addAll(Arrays.stream(text.split(";")).map(String::trim).toList());
+            } catch (IOException e) {
+                System.out.println("Unable to extract queries from " + queryFile.toString());
+                System.out.println(e.getMessage());
             }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
-        return queries;
+
     }
 }
