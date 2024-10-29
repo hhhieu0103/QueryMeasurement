@@ -42,7 +42,7 @@ public class QueryMeasurementController {
 
     public void initialize() {
         reader = new FileReader();
-//        reader.importCSVFilesToDB();
+        reader.importCSVFilesToDB();
         float[][] executionTimes = executeQueries();
         buildChartFactory(executionTimes);
         barChartFXList = createBarCharts();
