@@ -5,6 +5,10 @@ The project visualizes the query execution performance on different data sizes a
 
 ## Running the Project
 
+### Preparing data
+
+Please make sure that the csv data files are located under ```src > main > resources > data```.
+
 You can run this project via IntelliJ IDEA or directly through Maven.
 Personally, I recommend running this project with IntelliJ IDEA
 
@@ -44,7 +48,7 @@ Personally, I recommend running this project with IntelliJ IDEA
 By default, the application loads data files available on MyCourses each time it starts. You can:
 
 - **Load Custom Data**:
-   - Select ```File > Select Data Files``` from the top menu to import alternative data files.
+   - Select ```File > Select Data Files``` from the top menu to import alternative data files. Please wait a few seconds if you select large data files (> 100MB)
 - **Revert to Default Data**:
    - Select ```File > Select Default Data``` to reload the original data files.
 
