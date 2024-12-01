@@ -1,14 +1,13 @@
 package org.hieuho.querymeasurement;
 
 import com.opencsv.CSVReader;
+import org.hieuho.entities.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class FileReader {
@@ -76,35 +75,41 @@ public class FileReader {
 
     public void importCSVFilesToDB() {
         dataFilePaths.forEach(filePath -> {
-            try {
-                SalaryDAO salaryDAO = new SalaryDAO(getFileNameWithoutExtension(filePath));
-                salaryDAO.dropTable();
-                salaryDAO.createTable();
-
-                java.io.FileReader filereader = new java.io.FileReader(filePath.toFile());
-                CSVReader csvReader = new CSVReader(filereader);
-                csvReader.readNext();
-                String[] nextRecord;
-                ArrayList<Salary> buffer = new ArrayList<>();
-                int count = 0;
-
-                while ((nextRecord = csvReader.readNext()) != null) {
-                    if (buffer.size() == BUFFER_SIZE) {
-                        salaryDAO.addBatch(buffer);
-                        buffer = new ArrayList<>();
-                    }
-                    Salary salary = new Salary(nextRecord);
-                    buffer.add(salary);
-                    count++;
-                }
-                salaryDAO.addBatch(buffer);
-                csvReader.close();
-                System.out.println(filePath.toFile().getName() + " imported " + count + " records");
-            }
-            catch (Exception e) {
-                System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-            }
+            String dbName = getFileNameWithoutExtension(filePath);
+            importObjectToDB(filePath, new PersonDAO(dbName));
+            importObjectToDB(filePath, new SchoolDAO(dbName));
+            importObjectToDB(filePath, new CampusDAO(dbName));
+            importObjectToDB(filePath, new DepartmentDAO(dbName));
+            importObjectToDB(filePath, new JobDAO(dbName));
+            importObjectToDB(filePath, new FinancialRecordDAO(dbName));
         });
+    }
+
+    private <T> void importObjectToDB(Path filePath, DAOInterface<T> daoInterface) {
+        try {
+            java.io.FileReader filereader = new java.io.FileReader(filePath.toFile());
+            CSVReader csvReader = new CSVReader(filereader);
+            csvReader.readNext();
+            String[] nextRecord;
+            Set<T> buffer = new HashSet<>();
+            int count = 0;
+
+            while ((nextRecord = csvReader.readNext()) != null) {
+                if (buffer.size() == BUFFER_SIZE) {
+                    daoInterface.addBatch(buffer);
+                    buffer = new HashSet<>();
+                }
+                T object = daoInterface.parse(nextRecord);
+                buffer.add(object);
+                count++;
+            }
+            daoInterface.addBatch(buffer);
+            csvReader.close();
+            System.out.printf("%s imported %d %s records.%n", filePath.toFile().getName(), count, daoInterface.getClass().getSimpleName());
+        }
+        catch (Exception e) {
+            System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+        }
     }
 
     private String getFileNameWithoutExtension(Path filePath) {
@@ -123,7 +128,7 @@ public class FileReader {
                 queries.clear();
                 queries.addAll(Arrays.stream(text.split(";")).map(String::trim).toList());
             } catch (IOException e) {
-                System.out.println("Unable to extract queries from " + queryFile.toString());
+                System.out.println("Unable to extract queries from " + queryFile);
                 System.out.println(e.getMessage());
             }
         }
