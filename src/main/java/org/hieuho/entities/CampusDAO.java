@@ -9,6 +9,7 @@ public class CampusDAO extends DataAccessObject implements DAOInterface<Campus> 
         super(dbName);
     }
 
+    @Override
     public void createTable() throws SQLException {
         String query = """
             CREATE TABLE Campus (
@@ -21,6 +22,7 @@ public class CampusDAO extends DataAccessObject implements DAOInterface<Campus> 
         super.createTable(query);
     }
 
+    @Override
     public void dropTable() throws SQLException {
         super.dropTable("Campus");
     }
@@ -35,9 +37,9 @@ public class CampusDAO extends DataAccessObject implements DAOInterface<Campus> 
     @Override
     public void addBatch(Set<Campus> campuses) throws SQLException {
         String query = """
-            INSERT INTO Campus (
+            INSERT OR IGNORE INTO Campus (
                 SchoolID,
-                SchoolCampus,
+                SchoolCampus
             ) VALUES (?, ?)
         """;
 

@@ -87,6 +87,9 @@ public class FileReader {
 
     private <T> void importObjectToDB(Path filePath, DAOInterface<T> daoInterface) {
         try {
+            daoInterface.dropTable();
+            daoInterface.createTable();
+
             java.io.FileReader filereader = new java.io.FileReader(filePath.toFile());
             CSVReader csvReader = new CSVReader(filereader);
             csvReader.readNext();
@@ -98,11 +101,12 @@ public class FileReader {
                 if (buffer.size() == BUFFER_SIZE) {
                     daoInterface.addBatch(buffer);
                     buffer = new HashSet<>();
+                    count += BUFFER_SIZE;
                 }
                 T object = daoInterface.parse(nextRecord);
                 buffer.add(object);
-                count++;
             }
+            count += buffer.size();
             daoInterface.addBatch(buffer);
             csvReader.close();
             System.out.printf("%s imported %d %s records.%n", filePath.toFile().getName(), count, daoInterface.getClass().getSimpleName());

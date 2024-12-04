@@ -24,7 +24,7 @@ WHERE fr.PersonID = p.PersonID
   AND j.JobTitle = 'Lecturer'
   AND fr.StillWorking = 0;
 
-SELECT s.SchoolName, fr.SchoolCampus
+SELECT s.SchoolName, fr.SchoolCampus, COUNT(DISTINCT fr.PersonID) as NumberOfActiveFalcutyMembers
 FROM FinancialRecord fr, School s
 WHERE fr.StillWorking = 1 AND fr.SchoolID = s.SchoolID
 GROUP BY fr.SchoolID, fr.SchoolCampus
@@ -38,10 +38,13 @@ WHERE fr.PersonID = p.PersonID
   AND fr.DepartmentID = d.DepartmentID
   AND fr.SchoolID = s.SchoolID
   AND p.PersonName = 'Hieu Ho'
+  AND j.JobTitle = 'Engineer'
+  AND d.DepartmentName = 'Computer Engineering'
+  AND s.SchoolName = 'University of Massachusetts'
 ORDER BY fr.EarningsYear DESC
 LIMIT 1;
 
-SELECT d.DepartmentName
+SELECT d.DepartmentName, AVG(fr.Earnings) as AverageEarnings
 FROM FinancialRecord fr, Department d
 WHERE fr.DepartmentID = d.DepartmentID
 GROUP BY fr.DepartmentID

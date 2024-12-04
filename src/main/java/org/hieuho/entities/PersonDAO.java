@@ -1,8 +1,6 @@
 package org.hieuho.entities;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class PersonDAO extends DataAccessObject implements DAOInterface<Person> {
@@ -15,15 +13,14 @@ public class PersonDAO extends DataAccessObject implements DAOInterface<Person> 
     public Person parse(String[] columns) {
         int personID = Integer.parseInt(columns[0]);
         String personName = columns[1];
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy", Locale.ENGLISH);
-        LocalDate birthDate = LocalDate.parse(columns[7], formatter);
+        String birthDate = columns[7];
         return new Person(personID, personName, birthDate);
     }
 
     @Override
     public void addBatch(Set<Person> people) throws SQLException {
         String query = """
-            INSERT INTO Person (
+            INSERT OR IGNORE INTO Person (
                 PersonID,
                 PersonName,
                 BirthDate
@@ -42,6 +39,7 @@ public class PersonDAO extends DataAccessObject implements DAOInterface<Person> 
         super.addBatch(query, records);
     }
 
+    @Override
     public void createTable() throws SQLException {
         String query = """
             CREATE TABLE Person (
@@ -53,6 +51,7 @@ public class PersonDAO extends DataAccessObject implements DAOInterface<Person> 
         super.createTable(query);
     }
 
+    @Override
     public void dropTable() throws SQLException {
         super.dropTable("Person");
     }

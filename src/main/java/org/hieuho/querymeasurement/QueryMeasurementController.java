@@ -21,9 +21,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class QueryMeasurementController {
@@ -43,6 +42,7 @@ public class QueryMeasurementController {
     public void initialize() {
         reader = new FileReader();
         reader.importCSVFilesToDB();
+
         float[][] executionTimes = executeQueries();
         buildChartFactory(executionTimes);
         barChartFXList = createBarCharts();

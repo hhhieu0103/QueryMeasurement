@@ -19,9 +19,9 @@ public class DepartmentDAO extends DataAccessObject implements DAOInterface<Depa
     @Override
     public void addBatch(Set<Department> departments) throws SQLException {
         String query = """
-            INSERT INTO Department (
+            INSERT OR IGNORE INTO Department (
                 DepartmentID,
-                DepartmentName,
+                DepartmentName
             ) VALUES (?, ?)
         """;
 
@@ -36,6 +36,7 @@ public class DepartmentDAO extends DataAccessObject implements DAOInterface<Depa
         super.addBatch(query, records);
     }
 
+    @Override
     public void createTable() throws SQLException {
         String query = """
             CREATE TABLE Department (
@@ -47,6 +48,7 @@ public class DepartmentDAO extends DataAccessObject implements DAOInterface<Depa
         super.createTable(query);
     }
 
+    @Override
     public void dropTable() throws SQLException {
         super.dropTable("Department");
     }
