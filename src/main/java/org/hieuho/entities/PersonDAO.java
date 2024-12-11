@@ -1,5 +1,6 @@
 package org.hieuho.entities;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -18,7 +19,7 @@ public class PersonDAO extends DataAccessObject implements DAOInterface<Person> 
     }
 
     @Override
-    public void addBatch(Set<Person> people) throws SQLException {
+    public int addBatch(Set<Person> people) throws SQLException {
         String query = """
             INSERT OR IGNORE INTO Person (
                 PersonID,
@@ -36,7 +37,7 @@ public class PersonDAO extends DataAccessObject implements DAOInterface<Person> 
             records.add(record);
         }
 
-        super.addBatch(query, records);
+        return super.addBatch(query, records);
     }
 
     @Override
@@ -55,4 +56,18 @@ public class PersonDAO extends DataAccessObject implements DAOInterface<Person> 
     public void dropTable() throws SQLException {
         super.dropTable("Person");
     }
+
+//    public Person getPersonByName(String name) throws SQLException {
+//        String query = """
+//            SELECT p.* FROM Person p
+//            WHERE p.personName = ?
+//            """;
+//        List<StatementParameter> parameters = new ArrayList<>();
+//        parameters.add(new StatementParameter(1, name));
+//        Map<String, Object> personMap = super.executeQuery(query, parameters);
+//        int personID = (int) personMap.get("PersonID");
+//        String personName = (String) personMap.get("PersonName");
+//        String birthDate = (String) personMap.get("BirthDate");
+//        return new Person(personID, personName, birthDate);
+//    }
 }

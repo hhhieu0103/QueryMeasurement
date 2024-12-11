@@ -17,7 +17,7 @@ public class SchoolDAO extends DataAccessObject implements DAOInterface<School> 
     }
 
     @Override
-    public void addBatch(Set<School> schools) throws SQLException {
+    public int addBatch(Set<School> schools) throws SQLException {
         String query = """
             INSERT OR IGNORE INTO School (
                 SchoolID,
@@ -33,7 +33,7 @@ public class SchoolDAO extends DataAccessObject implements DAOInterface<School> 
             records.add(record);
         }
 
-        super.addBatch(query, records);
+        return super.addBatch(query, records);
     }
 
     @Override

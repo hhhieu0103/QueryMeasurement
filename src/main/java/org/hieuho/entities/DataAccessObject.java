@@ -1,13 +1,10 @@
 package org.hieuho.entities;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 public class DataAccessObject {
-    private final String dbName;
+    protected final String dbName;
 
     public DataAccessObject(String dbName) {
         this.dbName = dbName;
@@ -17,26 +14,23 @@ public class DataAccessObject {
         return DriverManager.getConnection(String.format("jdbc:sqlite:%s.sqlite", dbName));
     }
 
-    protected void addBatch(String query, List<List<StatementParameter>> records) throws SQLException {
+    protected int addBatch(String query, List<List<StatementParameter>> records) throws SQLException {
         Connection connection = getConnection();
         connection.setAutoCommit(false);
         PreparedStatement statement = connection.prepareStatement(query);
         for (List<StatementParameter> record : records) {
-            for (StatementParameter parameter : record) {
-                if (parameter.value() instanceof String) {
-                    statement.setString(parameter.index(), parameter.value().toString());
-                } else if (parameter.value() instanceof Integer) {
-                    statement.setInt(parameter.index(), (Integer) parameter.value());
-                }
-            }
+            fillParameters(statement, record);
             statement.addBatch();
         }
-        statement.executeBatch();
+        int[] rows = statement.executeBatch();
+        int insertedRows = Arrays.stream(rows).filter(i -> i == 1).toArray().length;
         connection.commit();
+        statement.close();
         connection.close();
+        return insertedRows;
     }
 
-    private void executeDDL(String query) throws SQLException {
+    private void executeUpdate(String query) throws SQLException {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(query);
         statement.executeUpdate();
@@ -45,10 +39,40 @@ public class DataAccessObject {
     }
 
     protected void createTable(String query) throws SQLException {
-        executeDDL(query);
+        executeUpdate(query);
     }
 
     protected void dropTable(String tableName) throws SQLException {
-        executeDDL("DROP TABLE IF EXISTS " + tableName);
+        executeUpdate("DROP TABLE IF EXISTS " + tableName);
     }
+
+    private void fillParameters(PreparedStatement statement, List<StatementParameter> parameters) throws SQLException {
+        for (StatementParameter parameter : parameters) {
+            if (parameter.value() instanceof String) {
+                statement.setString(parameter.index(), parameter.value().toString());
+            } else if (parameter.value() instanceof Integer) {
+                statement.setInt(parameter.index(), (Integer) parameter.value());
+            }
+        }
+    }
+
+//    protected Map<String, Object> executeQuery(String query, List<StatementParameter> parameters) throws SQLException {
+//        Connection connection = getConnection();
+//        PreparedStatement statement = connection.prepareStatement(query);
+//        fillParameters(statement, parameters);
+//        ResultSet resultSet = statement.executeQuery();
+//
+//        int columnCount = resultSet.getMetaData().getColumnCount();
+//        ResultSetMetaData metaData = resultSet.getMetaData();
+//
+//        Map<String, Object> row = new HashMap<>();
+//        for (int i = 1; i <= columnCount; i++) {
+//            row.put(metaData.getColumnName(i), resultSet.getObject(i));
+//        }
+//
+//        resultSet.close();
+//        statement.close();
+//        connection.close();
+//        return row;
+//    }
 }

@@ -17,7 +17,7 @@ public class DepartmentDAO extends DataAccessObject implements DAOInterface<Depa
     }
 
     @Override
-    public void addBatch(Set<Department> departments) throws SQLException {
+    public int addBatch(Set<Department> departments) throws SQLException {
         String query = """
             INSERT OR IGNORE INTO Department (
                 DepartmentID,
@@ -33,7 +33,7 @@ public class DepartmentDAO extends DataAccessObject implements DAOInterface<Depa
             records.add(record);
         }
 
-        super.addBatch(query, records);
+        return super.addBatch(query, records);
     }
 
     @Override

@@ -19,11 +19,20 @@ public class FinancialRecordDAO extends DataAccessObject implements DAOInterface
         String jobID = columns[9];
         int earnings = Integer.parseInt(columns[11]);
         int earningsYear = Integer.parseInt(columns[12]);
+
+//        PersonDAO personDAO = new PersonDAO(super.dbName);
+//        try {
+//            int pid = personDAO.getPersonByName(personName).personID();
+//            return new FinancialRecord(pid, personName, jobID, schoolID, schoolCampus, departmentID, stillWorking, earnings, earningsYear);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+
         return new FinancialRecord(personID, jobID, schoolID, schoolCampus, departmentID, stillWorking, earnings, earningsYear);
     }
 
     @Override
-    public void addBatch(Set<FinancialRecord> financialRecords) throws SQLException {
+    public int addBatch(Set<FinancialRecord> financialRecords) throws SQLException {
         String query = """
             INSERT OR IGNORE INTO FinancialRecord (
                 PersonID,
@@ -51,13 +60,14 @@ public class FinancialRecordDAO extends DataAccessObject implements DAOInterface
             records.add(record);
         }
 
-        super.addBatch(query, records);
+        return super.addBatch(query, records);
     }
 
     @Override
     public void createTable() throws SQLException {
         String query = """
             CREATE TABLE FinancialRecord (
+                RecordID INTEGER PRIMARY KEY AUTOINCREMENT,
                 PersonID INTEGER NOT NULL,
                 JobID TEXT NOT NULL,
                 SchoolID TEXT NOT NULL,
@@ -66,7 +76,6 @@ public class FinancialRecordDAO extends DataAccessObject implements DAOInterface
                 StillWorking INTEGER NOT NULL,
                 Earnings INTEGER NOT NULL,
                 EarningsYear INTEGER NOT NULL,
-                PRIMARY KEY (PersonID, SchoolID, SchoolCampus, DepartmentID, JobID, StillWorking, Earnings, EarningsYear),
                 FOREIGN KEY (PersonID) REFERENCES Person,
                 FOREIGN KEY (JobID) REFERENCES Job,
                 FOREIGN KEY (SchoolID) REFERENCES School,
@@ -74,6 +83,24 @@ public class FinancialRecordDAO extends DataAccessObject implements DAOInterface
                 FOREIGN KEY (DepartmentID) REFERENCES Department
             );
         """;
+//        String query = """
+//            CREATE TABLE FinancialRecord (
+//                PersonID INTEGER NOT NULL,
+//                JobID TEXT NOT NULL,
+//                SchoolID TEXT NOT NULL,
+//                SchoolCampus TEXT NOT NULL,
+//                DepartmentID TEXT NOT NULL,
+//                StillWorking INTEGER NOT NULL,
+//                Earnings INTEGER NOT NULL,
+//                EarningsYear INTEGER NOT NULL,
+//                PRIMARY KEY (PersonID, JobID, SchoolID, SchoolCampus, DepartmentID, Earnings, EarningsYear)
+//                FOREIGN KEY (PersonID) REFERENCES Person,
+//                FOREIGN KEY (JobID) REFERENCES Job,
+//                FOREIGN KEY (SchoolID) REFERENCES School,
+//                FOREIGN KEY (SchoolCampus) REFERENCES SchoolCampus,
+//                FOREIGN KEY (DepartmentID) REFERENCES Department
+//            );
+//        """;
         super.createTable(query);
     }
 

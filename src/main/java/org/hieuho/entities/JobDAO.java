@@ -19,7 +19,7 @@ public class JobDAO extends DataAccessObject implements DAOInterface<Job> {
     }
 
     @Override
-    public void addBatch(Set<Job> jobs) throws SQLException {
+    public int addBatch(Set<Job> jobs) throws SQLException {
         String query = """
             INSERT OR IGNORE INTO Job (
                 JobID,
@@ -35,7 +35,7 @@ public class JobDAO extends DataAccessObject implements DAOInterface<Job> {
             records.add(record);
         }
 
-        super.addBatch(query, records);
+        return super.addBatch(query, records);
     }
 
     @Override

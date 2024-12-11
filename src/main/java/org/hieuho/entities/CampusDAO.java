@@ -35,7 +35,7 @@ public class CampusDAO extends DataAccessObject implements DAOInterface<Campus> 
     }
 
     @Override
-    public void addBatch(Set<Campus> campuses) throws SQLException {
+    public int addBatch(Set<Campus> campuses) throws SQLException {
         String query = """
             INSERT OR IGNORE INTO Campus (
                 SchoolID,
@@ -51,6 +51,6 @@ public class CampusDAO extends DataAccessObject implements DAOInterface<Campus> 
             records.add(record);
         }
 
-        super.addBatch(query, records);
+        return super.addBatch(query, records);
     }
 }
