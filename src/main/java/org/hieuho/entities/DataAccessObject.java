@@ -55,24 +55,4 @@ public class DataAccessObject {
             }
         }
     }
-
-//    protected Map<String, Object> executeQuery(String query, List<StatementParameter> parameters) throws SQLException {
-//        Connection connection = getConnection();
-//        PreparedStatement statement = connection.prepareStatement(query);
-//        fillParameters(statement, parameters);
-//        ResultSet resultSet = statement.executeQuery();
-//
-//        int columnCount = resultSet.getMetaData().getColumnCount();
-//        ResultSetMetaData metaData = resultSet.getMetaData();
-//
-//        Map<String, Object> row = new HashMap<>();
-//        for (int i = 1; i <= columnCount; i++) {
-//            row.put(metaData.getColumnName(i), resultSet.getObject(i));
-//        }
-//
-//        resultSet.close();
-//        statement.close();
-//        connection.close();
-//        return row;
-//    }
 }

@@ -20,14 +20,6 @@ public class FinancialRecordDAO extends DataAccessObject implements DAOInterface
         int earnings = Integer.parseInt(columns[11]);
         int earningsYear = Integer.parseInt(columns[12]);
 
-//        PersonDAO personDAO = new PersonDAO(super.dbName);
-//        try {
-//            int pid = personDAO.getPersonByName(personName).personID();
-//            return new FinancialRecord(pid, personName, jobID, schoolID, schoolCampus, departmentID, stillWorking, earnings, earningsYear);
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-
         return new FinancialRecord(personID, jobID, schoolID, schoolCampus, departmentID, stillWorking, earnings, earningsYear);
     }
 
@@ -83,24 +75,6 @@ public class FinancialRecordDAO extends DataAccessObject implements DAOInterface
                 FOREIGN KEY (DepartmentID) REFERENCES Department
             );
         """;
-//        String query = """
-//            CREATE TABLE FinancialRecord (
-//                PersonID INTEGER NOT NULL,
-//                JobID TEXT NOT NULL,
-//                SchoolID TEXT NOT NULL,
-//                SchoolCampus TEXT NOT NULL,
-//                DepartmentID TEXT NOT NULL,
-//                StillWorking INTEGER NOT NULL,
-//                Earnings INTEGER NOT NULL,
-//                EarningsYear INTEGER NOT NULL,
-//                PRIMARY KEY (PersonID, JobID, SchoolID, SchoolCampus, DepartmentID, Earnings, EarningsYear)
-//                FOREIGN KEY (PersonID) REFERENCES Person,
-//                FOREIGN KEY (JobID) REFERENCES Job,
-//                FOREIGN KEY (SchoolID) REFERENCES School,
-//                FOREIGN KEY (SchoolCampus) REFERENCES SchoolCampus,
-//                FOREIGN KEY (DepartmentID) REFERENCES Department
-//            );
-//        """;
         super.createTable(query);
     }
 
