@@ -13,6 +13,13 @@ You can run this project via IntelliJ IDEA or directly through Maven.
 Personally, I recommend running this project with IntelliJ IDEA.
 You can also use any other IDEs that support Java Maven Project.
 
+### [Optional] Configuring the number of times each query is executed
+
+This program executes each query 10 times for each file size by default, without parallelization.
+Depending on your machine, it could take a long time to execute a large number of queries.
+You could change this number by modifying the ```NUMBER_OF_RUN_TIMES``` variable in ```src/main/java/org/hieuho/querymeasurement/QueryExecutor.java```.
+
+
 ### [RECOMMENDED] Running with IntelliJ IDEA
 
 **Requirements**:

@@ -71,7 +71,7 @@ public class FinancialRecordDAO extends DataAccessObject implements DAOInterface
                 FOREIGN KEY (PersonID) REFERENCES Person,
                 FOREIGN KEY (JobID) REFERENCES Job,
                 FOREIGN KEY (SchoolID) REFERENCES School,
-                FOREIGN KEY (SchoolCampus) REFERENCES SchoolCampus,
+                FOREIGN KEY (SchoolID, SchoolCampus) REFERENCES SchoolCampus,
                 FOREIGN KEY (DepartmentID) REFERENCES Department
             );
         """;
